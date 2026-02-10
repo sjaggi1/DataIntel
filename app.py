@@ -343,20 +343,35 @@ def show_upload_page():
             accept_multiple_files=True
         )
         
-        if image_files:
-            ocr_language = st.selectbox("OCR Language", ["English", "Hindi", "Multi-language"])
-            
-            if st.button("🔍 Process with OCR", type="primary"):
-                with st.spinner("Performing OCR..."):
-                    parser = PDFParser()
-                    for file in image_files:
-                        ocr_text = parser.ocr_extract(file, language=ocr_language)
-                        st.text_area("Extracted Text", ocr_text, height=200)
-                        
-                        # Parse to dataframe
-                        df = parser.parse_to_dataframe(ocr_text)
+        if st.button("🔍 Process with OCR", type="primary"):
+            with st.spinner("Performing OCR..."):
+                parser = PDFParser()
+
+                for file in image_files:
+                    file.seek(0)  # ✅ VERY IMPORTANT
+
+                    st.subheader(f"📄 {file.name}")
+
+                    # ✅ OCR extraction
+                    ocr_text = parser.ocr_extract(
+                        file,
+                        language=ocr_language
+                    )
+
+                    st.text_area(
+                        "Extracted Text",
+                        ocr_text,
+                        height=250
+                    )
+
+                    # ✅ Convert text → structured table
+                    df = parser.parse_to_dataframe(ocr_text)
+
+                    if not df.empty:
                         st.dataframe(df, use_container_width=True)
                         st.session_state.df = df
+                    else:
+                        st.warning("⚠️ No structured data detected")
     
     with tab3:
         st.markdown("### ⚙️ Upload Settings")
