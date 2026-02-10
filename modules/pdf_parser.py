@@ -64,7 +64,23 @@ class PDFParser:
         except Exception as e:
             return f"Error extracting text: {str(e)}"
 
+    def ocr_extract(self, file):
+        try:
+            import pytesseract
+            from pdf2image import convert_from_bytes
+            from PIL import Image
+        except Exception:
+            return ""  # OCR unavailable (cloud-safe)
     
+        try:
+            images = convert_from_bytes(file.read())
+            text = ""
+            for image in images:
+                text += pytesseract.image_to_string(image, lang="eng")
+            return text
+        except Exception:
+            return ""  # fallback safely
+
     # def ocr_extract(self, file, language="English"):
     #     """Extract text from scanned PDF or image using OCR"""
     #     try:
@@ -85,27 +101,27 @@ class PDFParser:
     #     except Exception as e:
     #         return f"OCR Error: {str(e)}\nNote: Tesseract OCR may not be installed. Using basic extraction."
     
-    def ocr_extract(self, file, language="English"):
-        """Extract text from scanned PDF or image using OCR (multi-page safe)"""
-        try:
-            if file.type == 'application/pdf':
-                file_bytes = file.read()  # 🔥 read ONCE
-                images = convert_from_bytes(file_bytes)
+    # def ocr_extract(self, file, language="English"):
+    #     """Extract text from scanned PDF or image using OCR (multi-page safe)"""
+    #     try:
+    #         if file.type == 'application/pdf':
+    #             file_bytes = file.read()  # 🔥 read ONCE
+    #             images = convert_from_bytes(file_bytes)
 
-                text_pages = []
-                for image in images:
-                    text_pages.append(
-                        pytesseract.image_to_string(image, lang='eng')
-                    )
+    #             text_pages = []
+    #             for image in images:
+    #                 text_pages.append(
+    #                     pytesseract.image_to_string(image, lang='eng')
+    #                 )
 
-                return "\n".join(text_pages)
+    #             return "\n".join(text_pages)
 
-            else:
-                image = Image.open(file)
-                return pytesseract.image_to_string(image, lang='eng')
+    #         else:
+    #             image = Image.open(file)
+    #             return pytesseract.image_to_string(image, lang='eng')
 
-        except Exception as e:
-            return f"OCR Error: {str(e)}"
+    #     except Exception as e:
+    #         return f"OCR Error: {str(e)}"
 
     
     def parse_to_dataframe(self, text, delimiter="Auto-detect"):
