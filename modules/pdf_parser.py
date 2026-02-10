@@ -6,9 +6,9 @@ import pytesseract
 from PIL import Image
 from pdf2image import convert_from_bytes
 
-pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)
+# pytesseract.pytesseract.tesseract_cmd = (
+#     r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# )
 
 class PDFParser:
     """Handles PDF text extraction and parsing"""
@@ -99,8 +99,8 @@ class PDFParser:
             # Image OCR
             else:
                 image = Image.open(BytesIO(file_bytes))
-                text = pytesseract.image_to_string(image, lang=language)
-    
+                text = pytesseract.image_to_string(image, lang='eng')
+                # text = pytesseract.image_to_string(image, lang='hin')
             return text.strip()
     
         except Exception as e:
