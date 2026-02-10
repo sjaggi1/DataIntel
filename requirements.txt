@@ -1,26 +1,27 @@
-streamlit==1.31.0
-pandas==2.2.0
-numpy>=1.26
+# Core
+streamlit==1.31.1
+numpy>=1.26.4
+pandas>=2.2.2
 
 # PDF & document processing
-PyPDF2
-pdfplumber
+PyPDF2>=3.0.1
+pdfplumber>=0.11.4
 pdf2image==1.17.0
-reportlab==4.0.9
-python-docx==1.1.0
-openpyxl
+reportlab>=4.1.0
+python-docx>=1.1.2
+openpyxl>=3.1.5
 
-# Imaging (safe version)
-pillow==10.4.0
+# Imaging (Python 3.13 wheel available)
+pillow>=10.4.0
 
-# Analytics & ML
-scikit-learn==1.3.2
-scipy==1.11.4
+# Analytics & ML (Python 3.13 compatible)
+scikit-learn>=1.4.2
+scipy>=1.13.0
 
 # Visualization
-matplotlib
-seaborn
-plotly
+matplotlib>=3.8.4
+seaborn>=0.13.2
+plotly>=5.19.0
 
-# OCR (installed but cloud-safe handling required)
+# OCR (binary-free, safe)
 pytesseract==0.3.10
