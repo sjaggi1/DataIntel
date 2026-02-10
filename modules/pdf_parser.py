@@ -64,22 +64,47 @@ class PDFParser:
         except Exception as e:
             return f"Error extracting text: {str(e)}"
 
-    def ocr_extract(self, file):
-        try:
-            import pytesseract
-            from pdf2image import convert_from_bytes
-            from PIL import Image
-        except Exception:
-            return ""  # OCR unavailable (cloud-safe)
+    # def ocr_extract(self, file):
+    #     try:
+    #         import pytesseract
+    #         from pdf2image import convert_from_bytes
+    #         from PIL import Image
+    #     except Exception:
+    #         return ""  # OCR unavailable (cloud-safe)
     
+    #     try:
+    #         images = convert_from_bytes(file.read())
+    #         text = ""
+    #         for image in images:
+    #             text += pytesseract.image_to_string(image, lang="eng")
+    #         return text
+    #     except Exception:
+    #         return ""  # fallback safely
+    def ocr_extract(self, uploaded_file, language="eng"):
+        """
+        OCR for images and PDFs (multi-page safe, Streamlit-safe)
+        """
         try:
-            images = convert_from_bytes(file.read())
             text = ""
-            for image in images:
-                text += pytesseract.image_to_string(image, lang="eng")
-            return text
-        except Exception:
-            return ""  # fallback safely
+    
+            # Read bytes once
+            file_bytes = uploaded_file.read()
+    
+            # PDF OCR
+            if uploaded_file.name.lower().endswith(".pdf"):
+                images = convert_from_bytes(file_bytes)
+                for img in images:
+                    text += pytesseract.image_to_string(img, lang=language)
+    
+            # Image OCR
+            else:
+                image = Image.open(BytesIO(file_bytes))
+                text = pytesseract.image_to_string(image, lang=language)
+    
+            return text.strip()
+    
+        except Exception as e:
+            return f"OCR Error: {e}"
 
     # def ocr_extract(self, file, language="English"):
     #     """Extract text from scanned PDF or image using OCR"""
